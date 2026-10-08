@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.SP_PI_Name} + ' - SHOPPING MALL'">상품 상세 - SHOPPING MALL</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+    <style>
+        :root {
+            --bg: #e8ece4;
+            --surface: #ffffff;
+            --ink: #16302a;
+            --ink-soft: #56675f;
+            --line: #d3dbd2;
+            --tag: #f3c64b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid var(--tag);
+            outline-offset: 2px;
+        }
+
+        /* 상단 메뉴 */
+        .header {
+            height: 72px;
+            padding: 0 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .logo {
+            color: var(--ink);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+
+        .nav { display: flex; gap: 6px; }
+
+        .nav a {
+            padding: 10px 16px;
+            border-radius: 6px;
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background .15s, color .15s;
+        }
+
+        .nav a:hover { background: rgba(22, 48, 42, 0.07); }
+
+        .nav .login { background: var(--ink); color: #fff; }
+        .nav .login:hover { background: #0e211c; color: #fff; }
+
+        /* 본문 */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 24px 80px;
+        }
+
+        /* 카테고리 경로 */
+        .breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+            color: var(--ink-soft);
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: var(--ink-soft);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+        .breadcrumb .sep { color: var(--line); }
+
+        .product {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 56px;
+            align-items: start;
+        }
+
+        /* 이미지 */
+        .main-image {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            background: var(--surface);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-soft);
+            font-size: 72px;
+        }
+
+        .main-image img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbs {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .thumbs button {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            padding: 0;
+            border: none;
+            border-radius: 6px;
+            background: var(--surface);
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: inset 0 0 0 1px var(--line);
+            color: var(--ink-soft);
+            font-size: 24px;
+        }
+
+        .thumbs button.active { box-shadow: inset 0 0 0 2px var(--ink); }
+
+        .thumbs img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumbs button.active img { opacity: .85; }
+
+        /* 상품 정보 */
+        .category {
+            display: inline-block;
+            margin-bottom: 14px;
+            padding: 6px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface);
+            color: var(--ink-soft);
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .category:hover { color: var(--ink); }
+
+        h1 {
+            margin: 0 0 20px;
+            font-size: clamp(26px, 3.4vw, 36px);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.03em;
+        }
+
+        .price {
+            margin-bottom: 28px;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .price small {
+            margin-left: 2px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .summary {
+            margin: 0 0 28px;
+            padding: 0;
+            border-top: 2px solid var(--ink);
+        }
+
+        .summary div {
+            display: flex;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+            font-size: 15px;
+        }
+
+        .summary dt {
+            width: 96px;
+            flex-shrink: 0;
+            color: var(--ink-soft);
+        }
+
+        .summary dd { margin: 0; font-weight: 600; }
+
+        .stock-out { color: #b3261e; }
+
+        .back {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 6px;
+            color: var(--ink);
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: inset 0 0 0 1.5px var(--ink);
+            transition: background .15s, color .15s;
+        }
+
+        .back:hover { background: var(--ink); color: #fff; }
+
+        /* 상세정보 */
+        .details {
+            margin-top: 64px;
+            padding: 36px 40px;
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .details h2 {
+            margin: 0 0 20px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .details table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        .details th,
+        .details td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+            line-height: 1.6;
+        }
+
+        .details th {
+            width: 180px;
+            background: #f5f7f3;
+            color: var(--ink-soft);
+            font-weight: 600;
+        }
+
+        .details tr:first-child th,
+        .details tr:first-child td { border-top: 1px solid var(--line); }
+
+        .details .none { margin: 0; color: var(--ink-soft); }
+
+        @media (max-width: 800px) {
+            .header { padding: 0 16px; }
+            .nav a { padding: 8px 10px; }
+            .page { padding: 24px 16px 60px; }
+            .product { grid-template-columns: 1fr; gap: 32px; }
+            .details { margin-top: 40px; padding: 24px 16px; }
+            .details th { width: 104px; padding: 12px; }
+            .details td { padding: 12px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <a href="/" class="logo">SHOPPING MALL</a>
+
+    <nav class="nav">
+        <a href="/product">상품</a>
+        <a href="/user/login" class="login">로그인</a>
+        <a href="/user/register">회원가입</a>
+    </nav>
+
+</header>
+
+
+<main class="page">
+
+    <!-- 카테고리 경로: 전체 > 대 > 중 > 소 -->
+    <nav class="breadcrumb" aria-label="카테고리 경로">
+        <a href="/product">전체</a>
+        <th:block th:if="${product.TOP_Code != null}">
+            <span class="sep">/</span>
+            <a th:href="@{/product(category=${product.TOP_Code})}" th:text="${product.TOP_Name}">대분류</a>
+        </th:block>
+        <th:block th:if="${product.MID_Code != null}">
+            <span class="sep">/</span>
+            <a th:href="@{/product(category=${product.MID_Code})}" th:text="${product.MID_Name}">중분류</a>
+        </th:block>
+        <span class="sep">/</span>
+        <a th:href="@{/product(category=${product.SP_CI_Code})}" th:text="${product.SP_CI_Name}">소분류</a>
+    </nav>
+
+    <section class="product">
+
+        <!-- 이미지 -->
+        <div class="gallery">
+
+            <div class="main-image">
+                <span aria-hidden="true">🛍️</span>
+                <img id="mainImage"
+                     th:if="${!#lists.isEmpty(images)}"
+                     th:src="@{/images/product/{name}(name=${images[0].SP_II_Name})}"
+                     th:alt="${product.SP_PI_Name}"
+                     onerror="this.style.display='none'">
+            </div>
+
+            <div class="thumbs" th:if="${#lists.size(images) > 1}">
+                <button type="button"
+                        th:each="img, stat : ${images}"
+                        th:classappend="${stat.first} ? 'active'"
+                        th:attr="data-src=@{/images/product/{name}(name=${img.SP_II_Name})},aria-label=${'이미지 ' + stat.count}">
+                    <span aria-hidden="true">🛍️</span>
+                    <img th:src="@{/images/product/{name}(name=${img.SP_II_Name})}" alt="" onerror="this.remove()">
+                </button>
+            </div>
+
+        </div>
+
+        <!-- 상품 정보 -->
+        <div class="info">
+
+            <a class="category"
+               th:href="@{/product(category=${product.SP_CI_Code})}"
+               th:text="${product.SP_CI_Name}">카테고리</a>
+
+            <h1 th:text="${product.SP_PI_Name}">상품 이름</h1>
+
+            <div class="price">
+                <span th:text="${#numbers.formatInteger(product.SP_PI_Price, 1, 'COMMA')}">0</span><small>원</small>
+            </div>
+
+            <dl class="summary">
+                <div>
+                    <dt>재고</dt>
+                    <dd th:if="${product.SP_PI_Count > 0}" th:text="${product.SP_PI_Count} + '개'">0개</dd>
+                    <dd th:unless="${product.SP_PI_Count > 0}" class="stock-out">품절</dd>
+                </div>
+                <div>
+                    <dt>공급처</dt>
+                    <dd th:text="${product.SP_PI_Supply}">공급처</dd>
+                </div>
+                <div>
+                    <dt>상품코드</dt>
+                    <dd th:text="${product.SP_PI_Code}">P001</dd>
+                </div>
+            </dl>
+
+            <a class="back"
+               th:href="@{/product(category=${product.SP_CI_Code})}">목록으로</a>
+
+        </div>
+
+    </section>
+
+    <!-- 상세정보 -->
+    <section class="details">
+
+        <h2>상품 상세정보</h2>
+
+        <table th:if="${!#lists.isEmpty(details)}">
+            <tr th:each="d : ${details}">
+                <th scope="row" th:text="${d.SP_DI_Name}">항목명</th>
+                <td th:text="${d.SP_DI_Value}">항목값</td>
+            </tr>
+        </table>
+
+        <p class="none" th:if="${#lists.isEmpty(details)}">등록된 상세정보가 없습니다.</p>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    // 썸네일을 누르면 큰 이미지를 바꿉니다.
+    const mainImage = document.getElementById("mainImage");
+
+    document.querySelectorAll(".thumbs button").forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            if (mainImage) {
+                mainImage.style.display = "";
+                mainImage.src = button.dataset.src;
+            }
+
+            document.querySelectorAll(".thumbs button").forEach(function (b) {
+                b.classList.remove("active");
+            });
+
+            button.classList.add("active");
+        });
+    });
+
+</script>
+
+</body>
+</html>

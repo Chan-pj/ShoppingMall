@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOPPING MALL</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+    <style>
+        :root {
+            --bg: #e8ece4;
+            --surface: #ffffff;
+            --ink: #16302a;
+            --ink-soft: #56675f;
+            --line: #d3dbd2;
+            --tag: #f3c64b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        a:focus-visible {
+            outline: 3px solid var(--tag);
+            outline-offset: 2px;
+        }
+
+        /* 상단 메뉴 */
+        .header {
+            height: 72px;
+            padding: 0 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .logo {
+            color: var(--ink);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+
+        .nav { display: flex; gap: 6px; }
+
+        .nav a {
+            padding: 10px 16px;
+            border-radius: 6px;
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background .15s, color .15s;
+        }
+
+        .nav a:hover { background: rgba(22, 48, 42, 0.07); }
+
+        .nav .login { background: var(--ink); color: #fff; }
+        .nav .login:hover { background: #0e211c; color: #fff; }
+
+        /* 메인 */
+        .hero {
+            min-height: calc(100vh - 72px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 24px 60px;
+        }
+
+        .hero-content {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 64px;
+        }
+
+        .hero-text { flex: 1; max-width: 560px; }
+
+        .hero-text .small-title {
+            display: inline-block;
+            margin-bottom: 22px;
+            padding: 6px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--surface);
+            color: var(--ink-soft);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .06em;
+        }
+
+        .hero-text h1 {
+            margin: 0 0 24px;
+            font-size: clamp(40px, 5.6vw, 64px);
+            font-weight: 800;
+            line-height: 1.12;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-text h1 span { color: inherit; }
+
+        .hero-text p {
+            margin: 0 0 36px;
+            color: var(--ink-soft);
+            font-size: 17px;
+            line-height: 1.75;
+        }
+
+        .buttons { display: flex; gap: 10px; }
+
+        .main-button {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background .15s, color .15s;
+        }
+
+        .main-button.login { background: var(--ink); color: #fff; }
+        .main-button.login:hover { background: #0e211c; }
+
+        .main-button.register {
+            background: transparent;
+            color: var(--ink);
+            box-shadow: inset 0 0 0 1.5px var(--ink);
+        }
+
+        .main-button.register:hover { background: var(--ink); color: #fff; }
+
+        /* 오른쪽 카드: 매달린 가격표 */
+        .hero-card {
+            position: relative;
+            width: 340px;
+            height: 400px;
+            flex-shrink: 0;
+            padding: 64px 18px 18px;
+            background: var(--tag);
+            border-radius: 20px 20px 14px 14px;
+            box-shadow: 0 40px 70px -35px rgba(22, 48, 42, 0.55);
+            transform: rotate(-5deg);
+            transform-origin: 50% 0;
+            display: flex;
+            text-align: center;
+        }
+
+        /* 구멍 */
+        .hero-card::before {
+            content: "";
+            position: absolute;
+            top: 22px;
+            left: calc(50% - 12px);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--bg);
+            box-shadow: inset 0 2px 3px rgba(22, 48, 42, 0.3);
+        }
+
+        /* 끈 */
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            top: -70px;
+            left: calc(50% - 1px);
+            width: 2px;
+            height: 104px;
+            background: var(--ink);
+            border-radius: 2px;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 28px;
+            border: 1.5px dashed rgba(22, 48, 42, 0.35);
+            border-radius: 10px;
+        }
+
+        .shopping-icon {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .hero-card h2 {
+            margin: 0 0 10px;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-card p {
+            margin: 0;
+            color: #3d4a2a;
+            line-height: 1.6;
+        }
+
+        /* 반응형 */
+        @media (max-width: 800px) {
+
+            .header { padding: 0 20px; }
+
+            .hero { padding-top: 48px; }
+
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 110px;
+            }
+
+            .buttons { justify-content: center; }
+
+            .hero-card {
+                width: min(320px, 100%);
+                height: 360px;
+                transform: rotate(-3deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <a href="/" class="logo">SHOPPING MALL</a>
+
+    <nav class="nav">
+        <a href="/product">상품</a>
+        <a href="/user/login" class="login">로그인</a>
+        <a href="/user/register">회원가입</a>
+    </nav>
+
+</header>
+
+
+<main class="hero">
+
+    <div class="hero-content">
+
+        <div class="hero-text">
+
+            <div class="small-title">ONLINE SHOPPING MALL</div>
+
+            <h1>
+                편리한 쇼핑의<br>
+                <span>새로운 시작</span>
+            </h1>
+
+            <p>
+                다양한 상품을 한곳에서 만나보세요.<br>
+                간편한 회원가입과 로그인으로<br>
+                편리하게 쇼핑을 시작할 수 있습니다.
+            </p>
+
+            <div class="buttons">
+                <a href="/user/login" class="main-button login">로그인</a>
+                <a href="/user/register" class="main-button register">회원가입</a>
+            </div>
+
+        </div>
+
+
+        <div class="hero-card">
+            <div class="card-content">
+                <div class="shopping-icon">🛒</div>
+                <h2>Welcome</h2>
+                <p>쇼핑몰에 오신 것을<br>환영합니다.</p>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

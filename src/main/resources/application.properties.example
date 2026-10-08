@@ -1,0 +1,10 @@
+spring.application.name=data_based-2
+spring.datasource.url=jdbc:sqlserver://localhost\\SQLEXPRESS;databaseName=ShoppingMall_System;encrypt=false;trustServerCertificate=true
+spring.datasource.username=chan
+spring.datasource.password=본인_DB_비밀번호
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+spring.datasource.hikari.connection-timeout=5000
+
+# Thymeleaf
+spring.thymeleaf.cache=false

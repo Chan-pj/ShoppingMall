@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+    <style>
+        :root {
+            --bg: #e8ece4;
+            --surface: #ffffff;
+            --field: #f4f6f1;
+            --ink: #16302a;
+            --ink-soft: #56675f;
+            --line: #d3dbd2;
+            --tag: #f3c64b;
+            --ok: #2f7a4f;
+            --err: #c23b2a;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: min(450px, calc(100% - 32px));
+            margin: 56px auto;
+            background: var(--surface);
+            padding: 44px 40px 36px;
+            border-radius: 6px;
+            border-top: 6px solid var(--ink);
+            box-shadow: 0 30px 60px -30px rgba(22, 48, 42, 0.35);
+        }
+
+        h1 {
+            margin: 0 0 32px;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            background: var(--field);
+            border: 1.5px solid transparent;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 15px;
+            color: var(--ink);
+            transition: border-color .15s, background .15s;
+        }
+
+        input::placeholder { color: #9aa69f; }
+
+        input:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--ink);
+        }
+
+        input:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        input[type="date"] { cursor: pointer; }
+
+        .auth-row { display: flex; gap: 8px; }
+        .auth-row input { flex: 1; min-width: 0; }
+
+        button {
+            border: none;
+            border-radius: 6px;
+            padding: 13px 16px;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .15s, color .15s;
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid var(--tag);
+            outline-offset: 2px;
+        }
+
+        .auth-button {
+            background: transparent;
+            color: var(--ink);
+            box-shadow: inset 0 0 0 1.5px var(--ink);
+            white-space: nowrap;
+        }
+
+        .auth-button:hover { background: var(--ink); color: #fff; }
+
+        .auth-button:disabled {
+            color: #9aa69f;
+            box-shadow: inset 0 0 0 1.5px var(--line);
+            background: transparent;
+            cursor: not-allowed;
+        }
+
+        .verify-button {
+            width: 100%;
+            margin-top: 10px;
+            background: var(--ok);
+            color: #fff;
+        }
+
+        .verify-button:hover { background: #256440; }
+
+        .register-button {
+            width: 100%;
+            margin-top: 12px;
+            padding: 16px;
+            background: var(--ink);
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .register-button:hover { background: #0e211c; }
+
+        .verify-button:disabled,
+        .register-button:disabled {
+            background: #d6ddd6;
+            color: #87948d;
+            cursor: not-allowed;
+        }
+
+        .test-code {
+            display: none;
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: #fdf4d3;
+            border-left: 4px solid var(--tag);
+            border-radius: 0 6px 6px 0;
+            color: #5c4a0c;
+            font-size: 14px;
+        }
+
+        .test-code strong {
+            margin-left: 4px;
+            font-size: 18px;
+            letter-spacing: .2em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer {
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--err);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .message { margin-top: 10px; font-size: 14px; }
+        .success { color: var(--ok); }
+        .error { color: var(--err); }
+
+        .back {
+            display: block;
+            margin-top: 24px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--ink-soft);
+            text-underline-offset: 4px;
+        }
+
+        .back:hover { color: var(--ink); }
+
+        @media (max-width: 480px) {
+            .container { margin: 32px auto; padding: 36px 24px 28px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>회원가입</h1>
+
+    <form id="registerForm">
+
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="id">아이디</label>
+            <input type="text" id="id" name="id" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">전화번호</label>
+            <input type="tel" id="phone" name="phone" placeholder="01012345678" maxlength="20" required>
+        </div>
+
+        <div class="form-group">
+            <label for="birth">생년월일</label>
+            <input type="date" id="birth" name="birth" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" placeholder="example@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label>전화번호 인증</label>
+
+            <div class="auth-row">
+                <input type="text" id="authCode" placeholder="인증번호 6자리" maxlength="6" disabled>
+                <button type="button" id="requestButton" class="auth-button" onclick="requestAuthCode()">
+                    인증번호 받기
+                </button>
+            </div>
+
+            <div id="testAuthCode" class="test-code"></div>
+            <div id="timer" class="timer"></div>
+
+            <button type="button" id="verifyButton" class="verify-button" onclick="verifyAuthCode()" disabled>
+                인증번호 확인
+            </button>
+
+            <div id="message" class="message"></div>
+        </div>
+
+        <button type="submit" id="registerButton" class="register-button" disabled>
+            회원가입
+        </button>
+
+    </form>
+
+    <a href="/" class="back">메인으로 돌아가기</a>
+
+</div>
+
+
+<script>
+
+    let timerInterval = null;
+    let verified = false;
+
+
+    // 인증번호 받기
+    function requestAuthCode() {
+
+        const name = document.getElementById("name").value.trim();
+        const id = document.getElementById("id").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const birth = document.getElementById("birth").value;
+        const email = document.getElementById("email").value.trim();
+
+        if (!name)  { showMessage("이름을 입력해주세요.", "error"); return; }
+        if (!id)    { showMessage("아이디를 입력해주세요.", "error"); return; }
+        if (!phone) { showMessage("전화번호를 입력해주세요.", "error"); return; }
+        if (!birth) { showMessage("생년월일을 선택해주세요.", "error"); return; }
+        if (!email) { showMessage("이메일을 입력해주세요.", "error"); return; }
+
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("id", id);
+        formData.append("phone", phone);
+        formData.append("birth", birth);
+        formData.append("email", email);
+
+        fetch("/user/register/auth", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("HTTP 오류 : " + response.status);
+            }
+            return response.text();
+        })
+        .then(result => {
+
+            console.log("인증번호 결과:", result);
+
+            if (result === "ERROR") {
+                showMessage("인증번호 발급 중 오류가 발생했습니다.", "error");
+                return;
+            }
+
+            document.getElementById("testAuthCode").innerHTML =
+                "테스트용 인증번호 : <strong>" + result + "</strong>";
+            document.getElementById("testAuthCode").style.display = "block";
+
+            document.getElementById("authCode").disabled = false;
+            document.getElementById("verifyButton").disabled = false;
+            document.getElementById("requestButton").innerText = "재발급";
+
+            showMessage("인증번호가 발급되었습니다.", "success");
+
+            startTimer();
+        })
+        .catch(error => {
+            console.error("인증번호 요청 오류:", error);
+            showMessage("서버 요청 중 오류가 발생했습니다.", "error");
+        });
+    }
+
+
+    // 인증번호 확인
+    function verifyAuthCode() {
+
+        const authCode = document.getElementById("authCode").value.trim();
+
+        if (!authCode) {
+            showMessage("인증번호를 입력해주세요.", "error");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("authCode", authCode);
+
+        fetch("/user/register/verify", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.text())
+        .then(result => {
+
+            console.log("인증 확인 결과:", result);
+
+            if (result === "SUCCESS") {
+
+                verified = true;
+
+                document.getElementById("authCode").disabled = true;
+                document.getElementById("verifyButton").disabled = true;
+                document.getElementById("requestButton").disabled = true;
+                document.getElementById("registerButton").disabled = false;
+
+                stopTimer();
+
+                showMessage("전화번호 인증이 완료되었습니다.", "success");
+
+            } else if (result === "FAIL") {
+                showMessage("인증번호가 올바르지 않거나 만료되었습니다.", "error");
+
+            } else if (result === "NO_REGISTER") {
+                showMessage("회원가입 정보가 없습니다.", "error");
+
+            } else {
+                showMessage("인증 처리 중 오류가 발생했습니다.", "error");
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            showMessage("서버와 통신할 수 없습니다.", "error");
+        });
+    }
+
+
+    // 회원가입 버튼 (인증 성공 시 /register/verify에서 이미 User_Info 저장됨)
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        if (!verified) {
+            showMessage("전화번호 인증을 먼저 완료해주세요.", "error");
+            return;
+        }
+
+        window.location.href = "/user/result?type=register";
+    });
+
+
+    // 3분 타이머
+    function startTimer() {
+
+        stopTimer();
+
+        let remaining = 180;
+        updateTimer(remaining);
+
+        timerInterval = setInterval(function() {
+
+            remaining--;
+            updateTimer(remaining);
+
+            if (remaining <= 0) {
+                stopTimer();
+                document.getElementById("requestButton").disabled = false;
+                document.getElementById("verifyButton").disabled = true;
+                showMessage("인증번호가 만료되었습니다. 다시 발급해주세요.", "error");
+            }
+
+        }, 1000);
+    }
+
+    function updateTimer(seconds) {
+        const minute = Math.floor(seconds / 60);
+        const second = seconds % 60;
+        document.getElementById("timer").innerText =
+            "남은 시간 : " + minute + ":" + String(second).padStart(2, "0");
+    }
+
+    function stopTimer() {
+        if (timerInterval !== null) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        document.getElementById("timer").innerText = "";
+    }
+
+    function showMessage(message, type) {
+        const element = document.getElementById("message");
+        element.innerText = message;
+        element.className = "message " + type;
+    }
+
+</script>
+
+</body>
+</html>

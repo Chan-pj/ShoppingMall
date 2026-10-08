@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${category != null} ? ${category.SP_CI_Name} + ' - SHOPPING MALL' : '전체 상품 - SHOPPING MALL'">상품 목록 - SHOPPING MALL</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+    <style>
+        :root {
+            --bg: #e8ece4;
+            --surface: #ffffff;
+            --ink: #16302a;
+            --ink-soft: #56675f;
+            --line: #d3dbd2;
+            --tag: #f3c64b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a:focus-visible {
+            outline: 3px solid var(--tag);
+            outline-offset: 2px;
+        }
+
+        /* 상단 메뉴 */
+        .header {
+            height: 72px;
+            padding: 0 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .logo {
+            color: var(--ink);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+
+        .nav { display: flex; gap: 6px; }
+
+        .nav a {
+            padding: 10px 16px;
+            border-radius: 6px;
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background .15s, color .15s;
+        }
+
+        .nav a:hover { background: rgba(22, 48, 42, 0.07); }
+
+        .nav .login { background: var(--ink); color: #fff; }
+        .nav .login:hover { background: #0e211c; color: #fff; }
+
+        /* 본문 */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .count {
+            color: var(--ink-soft);
+            font-size: 14px;
+        }
+
+        /* 카테고리 */
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .categories.sub { margin-bottom: 32px; }
+
+        .chip {
+            padding: 9px 16px;
+            border-radius: 999px;
+            background: var(--surface);
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: inset 0 0 0 1px var(--line);
+            transition: background .15s, color .15s;
+        }
+
+        .chip:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
+
+        .chip.active { background: var(--ink); color: #fff; box-shadow: none; }
+
+        .categories.sub .chip {
+            padding: 7px 14px;
+            font-size: 13px;
+            background: transparent;
+        }
+
+        .categories.sub .chip.active { background: var(--tag); color: var(--ink); }
+
+        /* 상품 카드 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+            color: var(--ink);
+            text-decoration: none;
+            box-shadow: 0 1px 0 var(--line);
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -24px rgba(22, 48, 42, 0.45);
+        }
+
+        .thumb {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            background: #f1f3ee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink-soft);
+            font-size: 40px;
+        }
+
+        .thumb img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .soldout {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: var(--ink);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .info { padding: 16px 18px 20px; }
+
+        .info .cat {
+            margin-bottom: 6px;
+            color: var(--ink-soft);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .info .name {
+            margin: 0 0 12px;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.4;
+            letter-spacing: -0.01em;
+        }
+
+        .info .price {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .card.is-soldout .price { color: var(--ink-soft); text-decoration: line-through; }
+
+        /* 빈 목록 */
+        .empty {
+            padding: 80px 24px;
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--ink-soft);
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        .empty strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--ink);
+            font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+            .header { padding: 0 16px; }
+            .nav a { padding: 8px 10px; }
+            .page { padding: 32px 16px 60px; }
+            h1 { font-size: 26px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .info { padding: 12px 12px 16px; }
+            .info .name { font-size: 14px; }
+            .info .price { font-size: 16px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <a href="/" class="logo">SHOPPING MALL</a>
+
+    <nav class="nav">
+        <a href="/product">상품</a>
+        <a href="/user/login" class="login">로그인</a>
+        <a href="/user/register">회원가입</a>
+    </nav>
+
+</header>
+
+
+<main class="page">
+
+    <div class="title-row">
+        <h1 th:text="${category != null} ? ${category.SP_CI_Name} : '전체 상품'">전체 상품</h1>
+        <span class="count" th:text="'상품 ' + ${#lists.size(products)} + '개'">상품 0개</span>
+    </div>
+
+    <!-- 대분류 -->
+    <nav class="categories" aria-label="대분류">
+        <a href="/product" class="chip" th:classappend="${topCode == null} ? 'active'">전체</a>
+        <a th:each="c : ${topCategories}"
+           th:href="@{/product(category=${c.SP_CI_Code})}"
+           th:text="${c.SP_CI_Name}"
+           th:classappend="${c.SP_CI_Code == topCode} ? 'active'"
+           class="chip">대분류</a>
+    </nav>
+
+    <!-- 중분류 (대분류를 선택했을 때만) -->
+    <nav class="categories sub" aria-label="중분류" th:if="${topCode != null}">
+        <a th:href="@{/product(category=${topCode})}"
+           th:classappend="${middleCode == null} ? 'active'"
+           class="chip">전체</a>
+        <a th:each="c : ${middleCategories}"
+           th:href="@{/product(category=${c.SP_CI_Code})}"
+           th:text="${c.SP_CI_Name}"
+           th:classappend="${c.SP_CI_Code == middleCode} ? 'active'"
+           class="chip">중분류</a>
+    </nav>
+
+    <div th:if="${topCode == null}" style="height: 20px"></div>
+
+    <!-- 상품 목록 -->
+    <div class="grid" th:if="${!#lists.isEmpty(products)}">
+
+        <a th:each="p : ${products}"
+           th:href="@{/product/{code}(code=${p.SP_PI_Code})}"
+           th:classappend="${p.SP_PI_Count <= 0} ? 'is-soldout'"
+           class="card">
+
+            <div class="thumb">
+                <span aria-hidden="true">🛍️</span>
+                <img th:if="${p.SP_II_Name != null}"
+                     th:src="@{/images/product/{name}(name=${p.SP_II_Name})}"
+                     th:alt="${p.SP_PI_Name}"
+                     loading="lazy"
+                     onerror="this.remove()">
+                <span class="soldout" th:if="${p.SP_PI_Count <= 0}">품절</span>
+            </div>
+
+            <div class="info">
+                <div class="cat" th:text="${p.SP_CI_Name}">카테고리</div>
+                <p class="name" th:text="${p.SP_PI_Name}">상품 이름</p>
+                <div class="price" th:text="${#numbers.formatInteger(p.SP_PI_Price, 1, 'COMMA')} + '원'">0원</div>
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="empty" th:if="${#lists.isEmpty(products)}">
+        <strong>등록된 상품이 없습니다.</strong>
+        다른 카테고리를 선택해 보세요.
+    </div>
+
+</main>
+
+</body>
+</html>

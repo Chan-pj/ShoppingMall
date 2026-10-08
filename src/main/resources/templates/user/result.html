@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>처리 결과 - SHOPPING MALL</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+    <style>
+        :root {
+            --bg: #e8ece4;
+            --surface: #ffffff;
+            --ink: #16302a;
+            --ink-soft: #56675f;
+            --line: #d3dbd2;
+            --tag: #f3c64b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a:focus-visible {
+            outline: 3px solid var(--tag);
+            outline-offset: 2px;
+        }
+
+        .header {
+            height: 72px;
+            padding: 0 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .logo {
+            color: var(--ink);
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+
+        .home {
+            color: var(--ink-soft);
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .home:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+        .page {
+            min-height: calc(100vh - 72px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 16px;
+        }
+
+        .result-box {
+            width: min(420px, 100%);
+            padding: 52px 40px 40px;
+            background: var(--surface);
+            border-radius: 6px;
+            border-top: 6px solid var(--ink);
+            box-shadow: 0 30px 60px -30px rgba(22, 48, 42, 0.35);
+            text-align: center;
+        }
+
+        .icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 26px;
+            border-radius: 50%;
+            background: var(--tag);
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            font-weight: 800;
+            animation: pop .45s cubic-bezier(.2, 1.4, .4, 1) both;
+        }
+
+        @keyframes pop {
+            from { transform: scale(.4); opacity: 0; }
+            to   { transform: scale(1);  opacity: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .icon { animation: none; }
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .message {
+            margin: 0 0 32px;
+            color: var(--ink-soft);
+            line-height: 1.7;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background .15s, color .15s;
+        }
+
+        .primary { background: var(--ink); color: #fff; }
+        .primary:hover { background: #0e211c; }
+
+        .secondary {
+            background: transparent;
+            color: var(--ink);
+            box-shadow: inset 0 0 0 1.5px var(--ink);
+        }
+
+        .secondary:hover { background: var(--ink); color: #fff; }
+
+        @media (max-width: 480px) {
+            .header { padding: 0 20px; }
+            .result-box { padding: 44px 24px 32px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <a href="/" class="logo">SHOPPING MALL</a>
+    <a href="/" class="home">메인으로</a>
+</header>
+
+<main class="page">
+
+    <div class="result-box">
+
+        <div class="icon">✓</div>
+
+        <h1 id="resultTitle">처리 완료</h1>
+
+        <p class="message" id="resultMessage">정상적으로 처리되었습니다.</p>
+
+        <div class="buttons">
+            <a href="/" class="button primary">메인으로</a>
+            <a href="/user/login" class="button secondary" id="loginButton">로그인하러 가기</a>
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+    // URL 뒤의 ?type=register 또는 ?type=login 으로 결과를 구분합니다.
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get("type");
+
+    const title = document.getElementById("resultTitle");
+    const message = document.getElementById("resultMessage");
+    const loginButton = document.getElementById("loginButton");
+
+    if (type === "register") {
+
+        title.textContent = "회원가입 완료";
+        message.textContent = "회원가입이 정상적으로 완료되었습니다.";
+        loginButton.style.display = "block";
+
+    } else if (type === "login") {
+
+        title.textContent = "로그인 성공";
+        message.textContent = "로그인이 정상적으로 완료되었습니다.";
+        loginButton.style.display = "none";
+
+    } else {
+
+        title.textContent = "처리 완료";
+        message.textContent = "요청하신 작업이 정상적으로 처리되었습니다.";
+    }
+
+</script>
+
+</body>
+</html>
