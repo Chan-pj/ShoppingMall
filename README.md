@@ -39,6 +39,8 @@ flowchart LR
 
 ## DB 설계
 
+### 상품 영역
+
 ```mermaid
 erDiagram
     SP_Category_Info ||--o{ SP_Category_Info : "상위코드 1·2"
@@ -46,19 +48,6 @@ erDiagram
     SP_Product_Info ||--o{ SP_Image_Info : "이미지"
     SP_Product_Info ||--o{ SP_Detail_Info : "상세정보"
 
-    SP_User_Info {
-        varchar SP_UI_No PK "회원코드"
-        varchar SP_UI_ID UK "아이디"
-        varchar SP_UI_PhoneNum UK "전화번호"
-        varchar SP_UI_Email UK "이메일"
-    }
-    SP_Auth_Info {
-        varchar SP_AI_Code PK "인증 코드"
-        varchar SP_UI_PhoneNum "전화번호"
-        char SP_AI_Saparator "L 로그인 / R 가입"
-        char SP_AI_AuthNum "인증번호 6자리"
-        datetime SP_AI_Rdate "발송 시각"
-    }
     SP_Category_Info {
         varchar SP_CI_Code PK "카테고리 코드"
         int SP_CI_Level "1 대 / 2 중 / 3 소"
@@ -81,6 +70,29 @@ erDiagram
         varchar SP_PI_Code FK "상품 코드"
         varchar SP_DI_Name "항목명"
         varchar SP_DI_Value "항목값"
+    }
+```
+
+### 회원 영역
+
+두 테이블은 FK 없이 전화번호 값으로만 연결됩니다.
+
+```mermaid
+erDiagram
+    SP_User_Info |o..o{ SP_Auth_Info : "전화번호 (FK 아님)"
+
+    SP_User_Info {
+        varchar SP_UI_No PK "회원코드"
+        varchar SP_UI_ID UK "아이디"
+        varchar SP_UI_PhoneNum UK "전화번호"
+        varchar SP_UI_Email UK "이메일"
+    }
+    SP_Auth_Info {
+        varchar SP_AI_Code PK "인증 코드"
+        varchar SP_UI_PhoneNum "전화번호"
+        char SP_AI_Saparator "L 로그인 / R 가입"
+        char SP_AI_AuthNum "인증번호 6자리"
+        datetime SP_AI_Rdate "발송 시각"
     }
 ```
 
